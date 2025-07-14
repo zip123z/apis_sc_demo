@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯請求單</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: false });
+    </script>
+    <script src="ci-data.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>編輯請求單</h1>
+            <div class="header-buttons">
+                <button class="btn"><i class="fas fa-save"></i> 儲存</button>
+                <button class="btn"><i class="fas fa-paper-plane"></i> 提交</button>
+            </div>
+        </header>
+
+        <div class="progress-bar">
+            <div class="step active">1. 草稿</div>
+            <div class="step">2. 已提交</div>
+            <div class="step">3. 問題分析</div>
+            <div class="step">4. 問題處理</div>
+            <div class="step">5. 完成確認</div>
+            <div class="step">6. 關閉</div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel panel">
+                <h2>基本資料</h2>
+                <div class="form-group">
+                    <label for="service-catalog">服務目錄</label>
+                    <input type="text" id="service-catalog" value="事件單" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="request-number">編號</label>
+                    <input type="text" id="request-number" value="TIDSEvent0000015" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="subject">主旨 *</label>
+                    <input type="text" id="subject" value="test-0708-8">
+                </div>
+                <div class="form-group">
+                    <label for="description">說明</label>
+                    <textarea id="description" placeholder="請輸入詳細說明..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="keywords">關鍵字</label>
+                    <input type="text" id="keywords" placeholder="輸入關鍵字">
+                </div>
+                <div class="form-group">
+                    <label for="priority">優先等級 *</label>
+                    <select id="priority">
+                        <option value="low">低</option>
+                        <option value="medium">中</option>
+                        <option value="high">高</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="impact-scope">影響範圍 *</label>
+                    <select id="impact-scope">
+                        <option value="single">單點</option>
+                        <option value="multiple">多點</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="total-time">總工時</label>
+                    <input type="text" id="total-time" value="0.0 小時" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="create-time">建立時間</label>
+                    <input type="text" id="create-time" value="2025-07-08 15:28:17" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="creator">建立人員 *</label>
+                    <input type="text" id="creator" value="APIS系統管理者" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="update-time">更新時間</label>
+                    <input type="text" id="update-time" value="2025-07-08 15:28:45" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="updater">更新人員</label>
+                    <input type="text" id="updater" value="APIS系統管理者" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="form-version">表單版本</label>
+                    <input type="text" id="form-version" value="18" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="process-stage">處理階段</label>
+                    <select id="process-stage">
+                        <option value="problem-analysis">問題分析</option>
+                        <option value="problem-solving">問題處理</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="center-panel panel">
+                <h2>詳情與執行</h2>
+                <div class="tab-nav">
+                    <button class="tab-button active" onclick="openTab(event, 'details-execution')">詳情與執行</button>
+                    <button class="tab-button" onclick="openTab(event, 'messages')">留言板</button>
+                    <button class="tab-button" onclick="openTab(event, 'timelogs')">工時紀錄</button>
+                    <button class="tab-button" onclick="openTab(event, 'attachments')">附檔</button>
+                    <button class="tab-button" onclick="openTab(event, 'subforms')">子表單</button>
+                    <button class="tab-button" onclick="openTab(event, 'change-log')">變更紀錄</button>
+                </div>
+
+                <div id="details-execution" class="tab-content active">
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i> 請選擇相關的 CI (設備或人員)，系統將自動顯示其詳細資訊。
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ci-selector">選擇 CI</label>
+                        <select id="ci-selector">
+                            <option value="">請選擇 CI...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source">來源</label>
+                        <select id="source">
+                            <option value="data-center">資料中心</option>
+                            <option value="user-report">使用者回報</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="device-type">設備類型</label>
+                        <select id="device-type">
+                            <option value="server">伺服器</option>
+                            <option value="laptop">筆電</option>
+                            <option value="printer">印表機</option>
+                            <option value="person">人員</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="device-code">設備代碼 *</label>
+                        <input type="text" id="device-code" value="123456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-description">問題描述</label>
+                        <textarea id="problem-description">test-0708-8</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reporter">報修人員 *</label>
+                        <input type="text" id="reporter" value="Jan">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-id">事件 id *</label>
+                        <input type="text" id="event-id" value="111">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">狀態 *</label>
+                        <select id="status">
+                            <option value="processing">處理中</option>
+                            <option value="completed">已完成</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assignee">到修人員 *</label>
+                        <input type="text" id="assignee" value="Wujan">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="repair-time">到修時間</label>
+                        <input type="datetime-local" id="repair-time" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="completion-time">完修時間 *</label>
+                        <input type="datetime-local" id="completion-time" value="2025-07-08T12:00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="repair-instruction">修復措施說明 *</label>
+                        <textarea id="repair-instruction"></textarea>
+                    </div>
+                </div>
+
+                <div id="messages" class="tab-content">
+                    <h3>留言板</h3>
+                    <div class="message-list">
+                        <div class="message-item">
+                            <div class="message-avatar">A</div>
+                            <div class="message-content">
+                                <div class="message-header"><span class="message-author">Admin</span> 2025-07-08 16:00</div>
+                                <div class="message-text">問題已收到，正在處理中。</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="message-avatar">U</div>
+                            <div class="message-content">
+                                <div class="message-header"><span class="message-author">User</span> 2025-07-08 16:15</div>
+                                <div class="message-text">好的，謝謝！</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-input">
+                        <textarea placeholder="輸入您的留言..."></textarea>
+                        <button class="btn">發送</button>
+                    </div>
+                </div>
+
+                <div id="timelogs" class="tab-content">
+                    <h3>工時紀錄</h3>
+                    <div class="stats-grid">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">總工時 (小時)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">紀錄筆數</div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>工時 (小時)</th>
+                                <th>說明</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-07-08</td>
+                                <td>4</td>
+                                <td>初步診斷</td>
+                                <td class="actions"><button class="btn">編輯</button><button class="btn">刪除</button></td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-09</td>
+                                <td>2</td>
+                                <td>零件更換</td>
+                                <td class="actions"><button class="btn">編輯</button><button class="btn">刪除</button></td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-10</td>
+                                <td>2</td>
+                                <td>最終測試</td>
+                                <td class="actions"><button class="btn">編輯</button><button class="btn">刪除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn" style="margin-top: 15px;">新增工時紀錄</button>
+                </div>
+
+                <div id="attachments" class="tab-content">
+                    <h3>附檔</h3>
+                    <div class="file-upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>拖曳檔案到此處或點擊上傳</h4>
+                        <p>支援檔案類型：PDF, DOCX, JPG, PNG</p>
+                        <button class="btn">選擇檔案</button>
+                    </div>
+                    <ul class="uploaded-files-list">
+                        <li class="uploaded-file-item">
+                            <div class="file-icon-circle"><i class="fas fa-file-pdf"></i></div>
+                            <div class="file-details">
+                                <div class="file-name">故障報告.pdf</div>
+                                <div class="file-meta">1.2 MB | 2025-07-08</div>
+                            </div>
+                            <div class="file-actions">
+                                <button class="btn">預覽</button>
+                                <button class="btn">下載</button>
+                                <button class="btn">刪除</button>
+                            </div>
+                        </li>
+                        <li class="uploaded-file-item">
+                            <div class="file-icon-circle"><i class="fas fa-image"></i></div>
+                            <div class="file-details">
+                                <div class="file-name">設備照片.jpg</div>
+                                <div class="file-meta">0.5 MB | 2025-07-09</div>
+                            </div>
+                            <div class="file-actions">
+                                <button class="btn">預覽</button>
+                                <button class="btn">下載</button>
+                                <button class="btn">刪除</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="subforms" class="tab-content">
+                    <h3>子表單</h3>
+                    <div class="sub-form-container">
+                        <h4><i class="fas fa-clipboard-list"></i> 零件更換申請</h4>
+                        <div class="sub-form-content">
+                            <div class="form-group">
+                                <label>零件名稱</label>
+                                <input type="text" value="顯示器">
+                            </div>
+                            <div class="form-group">
+                                <label>數量</label>
+                                <input type="number" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label>狀態</label>
+                                <select>
+                                    <option>已申請</option>
+                                    <option>已批准</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="sub-form-actions">
+                            <button class="btn">編輯</button>
+                            <button class="btn">刪除</button>
+                        </div>
+                    </div>
+                    <button class="btn">新增子表單</button>
+                </div>
+
+                <div id="change-log" class="tab-content">
+                    <h3>變更紀錄</h3>
+                    <ul class="change-log-container">
+                        <li class="change-item">
+                            <div class="change-icon create"><i class="fas fa-plus"></i></div>
+                            <div class="change-details">
+                                <div class="change-header"><span class="change-user">Admin</span> 於 2025-07-08 15:28 建立請求單</div>
+                                <div class="change-description">初始建立請求單 TIDSEvent0000015</div>
+                            </div>
+                        </li>
+                        <li class="change-item">
+                            <div class="change-icon update"><i class="fas fa-edit"></i></div>
+                            <div class="change-details">
+                                <div class="change-header"><span class="change-user">Wujan</span> 於 2025-07-08 16:30 更新狀態</div>
+                                <div class="change-description">將狀態從「草稿」變更為「處理中」</div>
+                            </div>
+                        </li>
+                        <li class="change-item">
+                            <div class="change-icon update"><i class="fas fa-edit"></i></div>
+                            <div class="change-details">
+                                <div class="change-header"><span class="change-user">Admin</span> 於 2025-07-09 09:00 更新主旨</div>
+                                <div class="change-description">主旨從「test-0708-8」變更為「test-0708-8 (已更新)」</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="right-panel panel">
+                <div class="tab-nav">
+                    <button class="tab-button active" onclick="openRightTab(event, 'ci-info')">CI 資訊</button>
+                    <button class="tab-button" onclick="openRightTab(event, 'related-requests')">相關請求單</button>
+                </div>
+
+                <div id="ci-info" class="tab-content active">
+                    <h3>CI 詳細資訊</h3>
+                    <div id="ci-display-area">
+                        <div class="loading-spinner" id="ci-loading-spinner" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> 載入 CI 資訊中...
+                        </div>
+                        <div id="ci-details-content">
+                            <!-- CI 詳細資訊將在這裡動態載入 -->
+                            <p>請選擇一個 CI 以顯示其詳細資訊。</p>
+                        </div>
+                        <button class="btn" id="show-relation-graph-btn" style="margin-top: 15px; display: none;">顯示關聯圖</button>
+                    </div>
+                </div>
+
+                <div id="related-requests" class="tab-content">
+                    <h3>相關請求單</h3>
+                    <p>此處將顯示與所選 CI 相關的請求單列表。</p>
+                    <!-- 相關請求單列表將在這裡動態載入 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mermaid Modal -->
+    <div id="mermaid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>CI 關聯圖</h2>
+            <div class="mermaid-graph-container" id="mermaid-graph-container">
+                <div class="mermaid" id="mermaid-graph">
+                    <!-- Mermaid 圖形將在這裡渲染 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab 切換邏輯
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function openRightTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.querySelectorAll(".right-panel .tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.querySelectorAll(".right-panel .tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // CI 選擇器邏輯
+        document.addEventListener("DOMContentLoaded", function() {
+            const ciSelector = document.getElementById("ci-selector");
+            const ciDisplayArea = document.getElementById("ci-details-content");
+            const ciLoadingSpinner = document.getElementById("ci-loading-spinner");
+            const showRelationGraphBtn = document.getElementById("show-relation-graph-btn");
+            const mermaidGraphContainer = document.getElementById("mermaid-graph-container");
+            const mermaidModal = document.getElementById("mermaid-modal");
+            const closeModalButton = document.querySelector(".modal .close-button");
+
+            // Populate CI selector
+            if (typeof ciData !== 'undefined' && ciData.length > 0) {
+                ciData.forEach(ci => {
+                    const option = document.createElement("option");
+                    option.value = ci.id;
+                    option.textContent = `${ci.name} (${ci.type})`;
+                    ciSelector.appendChild(option);
+                });
+            } else {
+                console.error("ciData is not defined or empty.");
+                ciDisplayArea.innerHTML = "<p style='color: red;'>無法載入 CI 資料。請檢查 ci-data.js 檔案。</p>";
+            }
+
+            ciSelector.addEventListener("change", function() {
+                const selectedCiId = this.value;
+                if (selectedCiId) {
+                    ciLoadingSpinner.style.display = "block";
+                    ciDisplayArea.innerHTML = ""; // Clear previous content
+                    showRelationGraphBtn.style.display = "none"; // Hide button until loaded
+
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        const selectedCi = ciData.find(ci => ci.id === selectedCiId);
+                        if (selectedCi) {
+                            let detailsHtml = `
+                                <div class="ci-info-card">
+                                    <div class="header">
+                                        <div class="icon-circle"><i class="${selectedCi.icon}"></i></div>
+                                        <div>
+                                            <h3>${selectedCi.name}</h3>
+                                            <p>${selectedCi.type} | <span class="status-${selectedCi.status.toLowerCase()}">${selectedCi.status}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="ci-details-grid">
+                                        <div class="detail-item"><span>ID:</span><span>${selectedCi.id}</span></div>
+                                        <div class="detail-item"><span>位置:</span><span>${selectedCi.location}</span></div>
+                                        <div class="detail-item"><span>IP 位址:</span><span>${selectedCi.ipAddress}</span></div>
+                                        <div class="detail-item"><span>作業系統:</span><span>${selectedCi.os}</span></div>
+                                        <div class="detail-item"><span>CPU:</span><span>${selectedCi.cpu}</span></div>
+                                        <div class="detail-item"><span>記憶體:</span><span>${selectedCi.ram}</span></div>
+                                        <div class="detail-item"><span>儲存:</span><span>${selectedCi.storage}</span></div>
+                                        <div class="detail-item"><span>負責人:</span><span>${selectedCi.owner}</span></div>
+                                        <div class="detail-item"><span>上次維護:</span><span>${selectedCi.lastMaintenance}</span></div>
+                                        <div class="detail-item"><span>備註:</span><span>${selectedCi.notes}</span></div>
+                                    </div>
+                                </div>
+                            `;
+                            ciDisplayArea.innerHTML = detailsHtml;
+                            showRelationGraphBtn.style.display = "block"; // Show button after content is loaded
+                        } else {
+                            ciDisplayArea.innerHTML = `<p>找不到 ID 為 ${selectedCiId} 的 CI 資訊。</p>`;
+                            showRelationGraphBtn.style.display = "none";
+                        }
+                        ciLoadingSpinner.style.display = "none";
+                    }, 500); // Simulate 0.5 second delay
+                } else {
+                    ciDisplayArea.innerHTML = "<p>請選擇一個 CI 以顯示其詳細資訊。</p>";
+                    showRelationGraphBtn.style.display = "none";
+                }
+            });
+
+            // Mermaid Modal Logic
+            showRelationGraphBtn.addEventListener("click", function() {
+                const selectedCiId = ciSelector.value;
+                let mermaidSyntax = ``;
+
+                if (selectedCiId) {
+                    const selectedCi = ciData.find(ci => ci.id === selectedCiId);
+                    if (selectedCi) {
+                        // Generate dynamic Mermaid syntax based on selected CI
+                        // Ensure relatedCIs and relatedPersons are arrays before mapping
+                        const relatedCIsNodes = Array.isArray(selectedCi.relatedCIs) ? selectedCi.relatedCIs.map(rc => `${rc.id}["${rc.name} (${rc.id})<br/>${rc.type}"]`).join('\n') : '';
+                        const relatedCIsLinks = Array.isArray(selectedCi.relatedCIs) ? selectedCi.relatedCIs.map(rc => `${selectedCi.id} --> ${rc.id}`).join('\n') : '';
+
+                        const relatedPersonsNodes = Array.isArray(selectedCi.relatedPersons) ? selectedCi.relatedPersons.map(rp => `${rp.id}["${rp.name} (${rp.id})<br/>${rp.type}"]`).join('\n') : '';
+                        const relatedPersonsLinks = Array.isArray(selectedCi.relatedPersons) ? selectedCi.relatedPersons.map(rp => `${rp.id} --> ${selectedCi.id}`).join('\n') : '';
+
+                        mermaidSyntax = `
+                            graph TD
+                              %% ===== CI架構層 =====
+                              subgraph CI架構層
+                                ${selectedCi.id}["${selectedCi.name} (${selectedCi.id})<br/>${selectedCi.type}"]
+                                ${relatedCIsNodes}
+
+                                ${relatedCIsLinks}
+                              end
+
+                              %% ===== 服務依賴層 =====
+                              subgraph 服務依賴層
+                                %% 強制顯示的節點（僅包含起始 CI 和服務依賴節點）
+                                ${selectedCi.id}["${selectedCi.name} (${selectedCi.id})<br/>${selectedCi.type}"]
+                                ${relatedPersonsNodes}
+
+                                ${relatedPersonsLinks}
+                              end
+
+                              %% ===== 樣式定義 =====
+                              classDef physical fill:#f9f2d9,stroke:#e8d174;
+                              classDef service fill:#d9e8f5,stroke:#7db8da;
+                              class CI架構層 physical
+                              class 服務依賴層 service
+                        `;
+                    } else {
+                        mermaidSyntax = `graph TD\n  A[錯誤]\n  B[找不到所選 CI 的關聯圖資料]\n  A --> B`;
+                    }
+                } else {
+                    // Default example Mermaid syntax if no CI is selected
+                    mermaidSyntax = `
+                        graph TD
+                          %% ===== CI架構層 =====
+                          subgraph CI架構層
+                            653["1F (653)<br/>樓層(Floor)"] --> 687["實體伺服器40560 (687)<br/>實體伺服器(Physical Server)"]
+                          648["能源中心 (648)<br/>建築物(Building)"] --> 653["1F (653)<br/>樓層(Floor)"]
+                          end
+
+                          %% ===== 服務依賴層 =====
+                          subgraph 服務依賴層
+                            %% 強制顯示的節點（僅包含起始 CI 和服務依賴節點）
+                            687["實體伺服器40560 (687)<br/>實體伺服器(Physical Server)"]
+                          933["林義新 (933)<br/>人員(Person)"]
+
+                            %% 服務層關聯線
+                            933["林義新 (933)<br/>人員(Person)"] --> 687["實體伺服器40560 (687)<br/>實體伺服器(Physical Server)"]
+                          end
+
+                          %% ===== 樣式定義 =====
+                          classDef physical fill:#f9f2d9,stroke:#e8d174;
+                          classDef service fill:#d9e8f5,stroke:#7db8da;
+                          class CI架構層 physical
+                          class 服務依賴層 service
+                    `;
+                }
+
+                // Clear previous graph and render new one
+                const mermaidGraphDiv = document.getElementById("mermaid-graph");
+                mermaidGraphDiv.innerHTML = ""; // Clear previous SVG
+                const graphId = 'graphDiv' + Math.random().toString(36).substr(2, 9); // Unique ID for each render
+                mermaidGraphDiv.id = graphId; // Assign unique ID to the div
+
+                try {
+                    mermaid.render(graphId, mermaidSyntax).then(({ svg, bindFunctions }) => {
+                        mermaidGraphDiv.innerHTML = svg;
+                        if (bindFunctions) bindFunctions();
+                    }).catch(error => {
+                        console.error("Mermaid rendering failed:", error);
+                        mermaidGraphDiv.innerHTML = `<p style="color: red;">關聯圖渲染失敗：${error.message}</p>`;
+                    });
+                } catch (e) {
+                    console.error("Mermaid render call failed:", e);
+                    mermaidGraphDiv.innerHTML = `<p style="color: red;">關聯圖渲染呼叫失敗：${e.message}</p>`;
+                }
+
+                mermaidModal.style.display = "block";
+            });
+
+            closeModalButton.addEventListener("click", function() {
+                mermaidModal.style.display = "none";
+            });
+
+            window.addEventListener("click", function(event) {
+                if (event.target == mermaidModal) {
+                    mermaidModal.style.display = "none";
+                }
+            });
+
+            // Initial state: no CI selected
+            ciSelector.value = "";
+            ciDisplayArea.innerHTML = "<p>請選擇一個 CI 以顯示其詳細資訊。</p>";
+            showRelationGraphBtn.style.display = "none";
+        });
+    </script>
+</body>
+</html>
+
+
